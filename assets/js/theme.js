@@ -1,7 +1,7 @@
 // Has to be in the head tag, otherwise a flicker effect will occur.
 
 // Toggle through light, dark, and system theme settings.
-let toggleThemeSetting = () => {
+function toggleThemeSetting() {
   let themeSetting = determineThemeSetting();
   if (themeSetting == "system") {
     setThemeSetting("light");
@@ -10,19 +10,19 @@ let toggleThemeSetting = () => {
   } else {
     setThemeSetting("system");
   }
-};
+}
 
 // Change the theme setting and apply the theme.
-let setThemeSetting = (themeSetting) => {
+function setThemeSetting(themeSetting) {
   localStorage.setItem("theme", themeSetting);
 
   document.documentElement.setAttribute("data-theme-setting", themeSetting);
 
   applyTheme();
-};
+}
 
 // Apply the computed dark or light theme to the website.
-let applyTheme = () => {
+function applyTheme() {
   let theme = determineComputedTheme();
 
   transTheme();
@@ -86,9 +86,9 @@ let applyTheme = () => {
       background: getComputedStyle(document.documentElement).getPropertyValue("--global-bg-color") + "ee", // + 'ee' for trasparency.
     });
   }
-};
+}
 
-let setHighlight = (theme) => {
+function setHighlight(theme) {
   if (theme == "dark") {
     document.getElementById("highlight_theme_light").media = "none";
     document.getElementById("highlight_theme_dark").media = "";
@@ -96,9 +96,9 @@ let setHighlight = (theme) => {
     document.getElementById("highlight_theme_dark").media = "none";
     document.getElementById("highlight_theme_light").media = "";
   }
-};
+}
 
-let setGiscusTheme = (theme) => {
+function setGiscusTheme(theme) {
   function sendMessage(message) {
     const iframe = document.querySelector("iframe.giscus-frame");
     if (!iframe) return;
@@ -110,9 +110,10 @@ let setGiscusTheme = (theme) => {
       theme: theme,
     },
   });
-};
+}
 
-let addMermaidZoom = (records, observer) => {
+function addMermaidZoom(records, observer) {
+  if (typeof d3 === "undefined") return;
   var svgs = d3.selectAll(".mermaid svg");
   svgs.each(function () {
     var svg = d3.select(this);
@@ -124,9 +125,9 @@ let addMermaidZoom = (records, observer) => {
     svg.call(zoom);
   });
   observer.disconnect();
-};
+}
 
-let setMermaidTheme = (theme) => {
+function setMermaidTheme(theme) {
   if (theme == "light") {
     // light theme name in mermaid is 'default'
     // https://mermaid.js.org/config/theming.html#available-themes
@@ -150,9 +151,9 @@ let setMermaidTheme = (theme) => {
     const observerOptions = { childList: true };
     observer.observe(observable, observerOptions);
   }
-};
+}
 
-let setDiff2htmlTheme = (theme) => {
+function setDiff2htmlTheme(theme) {
   document.querySelectorAll(".diff2html").forEach((elem) => {
     // Get the code block content from previous element, since it is the diff code itself as defined in Markdown, but it is hidden
     let textData = elem.previousSibling.childNodes[0].innerHTML;
@@ -161,9 +162,9 @@ let setDiff2htmlTheme = (theme) => {
     const diff2htmlUi = new Diff2HtmlUI(elem, textData, configuration);
     diff2htmlUi.draw();
   });
-};
+}
 
-let setEchartsTheme = (theme) => {
+function setEchartsTheme(theme) {
   document.querySelectorAll(".echarts").forEach((elem) => {
     // Get the code block content from previous element, since it is the echarts code itself as defined in Markdown, but it is hidden
     let jsonData = elem.previousSibling.childNodes[0].innerHTML;
@@ -177,9 +178,9 @@ let setEchartsTheme = (theme) => {
 
     chart.setOption(JSON.parse(jsonData));
   });
-};
+}
 
-let setPlotlyTheme = (theme) => {
+function setPlotlyTheme(theme) {
   document.querySelectorAll(".js-plotly-plot").forEach((elem) => {
     // Get the code block content from previous element, since it is the plotly code itself as defined in Markdown, but it is hidden
     let jsonData = JSON.parse(elem.previousSibling.childNodes[0].innerHTML);
@@ -218,9 +219,9 @@ let setPlotlyTheme = (theme) => {
 
     Plotly.relayout(elem, jsonData.layout);
   });
-};
+}
 
-let setVegaLiteTheme = (theme) => {
+function setVegaLiteTheme(theme) {
   document.querySelectorAll(".vega-lite").forEach((elem) => {
     // Get the code block content from previous element, since it is the vega lite code itself as defined in Markdown, but it is hidden
     let jsonData = elem.previousSibling.childNodes[0].innerHTML;
@@ -231,9 +232,9 @@ let setVegaLiteTheme = (theme) => {
       vegaEmbed(elem, JSON.parse(jsonData));
     }
   });
-};
+}
 
-let setSearchTheme = (theme) => {
+function setSearchTheme(theme) {
   const ninjaKeys = document.querySelector("ninja-keys");
   if (!ninjaKeys) return;
 
@@ -242,28 +243,28 @@ let setSearchTheme = (theme) => {
   } else {
     ninjaKeys.classList.remove("dark");
   }
-};
+}
 
-let transTheme = () => {
+function transTheme() {
   document.documentElement.classList.add("transition");
   window.setTimeout(() => {
     document.documentElement.classList.remove("transition");
   }, 500);
-};
+}
 
 // Determine the expected state of the theme toggle, which can be "dark", "light", or
 // "system". Default is "system".
-let determineThemeSetting = () => {
+function determineThemeSetting() {
   let themeSetting = localStorage.getItem("theme");
   if (themeSetting != "dark" && themeSetting != "light" && themeSetting != "system") {
     themeSetting = "system";
   }
   return themeSetting;
-};
+}
 
 // Determine the computed theme, which can be "dark" or "light". If the theme setting is
 // "system", the computed theme is determined based on the user's system preference.
-let determineComputedTheme = () => {
+function determineComputedTheme() {
   let themeSetting = determineThemeSetting();
   if (themeSetting == "system") {
     const userPref = window.matchMedia;
@@ -275,9 +276,9 @@ let determineComputedTheme = () => {
   } else {
     return themeSetting;
   }
-};
+}
 
-let initTheme = () => {
+function initTheme() {
   let themeSetting = determineThemeSetting();
 
   setThemeSetting(themeSetting);
@@ -295,4 +296,4 @@ let initTheme = () => {
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
     applyTheme();
   });
-};
+}

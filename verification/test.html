@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Test</title>
+    <!-- Mocks for elements used in theme.js -->
+    <link id="highlight_theme_light" rel="stylesheet" href="#" media="">
+    <link id="highlight_theme_dark" rel="stylesheet" href="#" media="none">
+
+    <style>
+        :root {
+            --global-bg-color: #ffffff;
+        }
+        html[data-theme="dark"] {
+            --global-bg-color: #1c1c1d;
+            background-color: #1c1c1d;
+            color: white;
+        }
+    </style>
+
+    <!-- Load the modified theme.js -->
+    <script src="../assets/js/theme.js"></script>
+    <script>
+        // Call initTheme as done in head.liquid
+        initTheme();
+    </script>
+</head>
+<body>
+    <header>
+        <button id="light-toggle" title="Change theme">
+            Toggle Theme
+        </button>
+    </header>
+
+    <h1>Dark Mode Test</h1>
+    <p>Current theme setting: <span id="theme-setting"></span></p>
+    <p>Current computed theme: <span id="computed-theme"></span></p>
+
+    <!-- Mock for common.js usage -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Verify global access
+            try {
+                const computed = determineComputedTheme();
+                console.log("Global access verification: determineComputedTheme returned " + computed);
+                document.getElementById("computed-theme").innerText = computed;
+            } catch (e) {
+                console.error("Global access verification failed: " + e.message);
+                document.getElementById("computed-theme").innerText = "Error: " + e.message;
+            }
+
+            // Update display on click
+            document.getElementById("light-toggle").addEventListener("click", function() {
+                setTimeout(() => {
+                    document.getElementById("theme-setting").innerText = localStorage.getItem("theme");
+                    document.getElementById("computed-theme").innerText = document.documentElement.getAttribute("data-theme");
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
